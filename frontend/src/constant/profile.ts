@@ -122,13 +122,13 @@ export const DefaultInboundDirect = (): NonNullable<App.Inbound['direct']> => ({
 
 export const DefaultInboundTun = (): NonNullable<App.Inbound['tun']> => ({
   interface_name: '',
-  address: ['172.18.0.1/30', 'fdfe:dcba:9876::1/126'],
-  mtu: 0,
+  address: ['172.18.0.1/30'],
+  mtu: 1400,
   auto_route: true,
   strict_route: true,
   route_address: [],
   route_exclude_address: [],
-  endpoint_independent_nat: false,
+  endpoint_independent_nat: true,
   stack: TunStack.Mixed,
 })
 
@@ -520,7 +520,7 @@ export const DefaultRoute = (): App.Route => ({
   ],
   auto_detect_interface: true,
   default_interface: '',
-  final: DefaultOutboundIds.Fallback,
+  final: DefaultOutboundIds.Select,
   find_process: false,
   default_http_client: DefaultOutboundIds.Select,
   default_domain_resolver: {
@@ -595,10 +595,10 @@ export const DefaultDnsServers = (): App.DnsServerConfig[] => [
     id: DefaultDnsServersIds.RemoteDns,
     tag: DefaultDnsServersIds.RemoteDns,
     detour: DefaultOutboundIds.Select,
-    type: DnsServer.Tls,
+    type: DnsServer.Udp,
     domain_resolver: DefaultDnsServersIds.RemoteDnsResolver,
-    server: '8.8.8.8',
-    server_port: '853',
+    server: '1.1.1.1',
+    server_port: '53',
     path: '',
     interface: '',
     inet4_range: '',
@@ -612,7 +612,7 @@ export const DefaultDnsServers = (): App.DnsServerConfig[] => [
     detour: DefaultOutboundIds.Select,
     type: DnsServer.Udp,
     domain_resolver: '',
-    server: '8.8.8.8',
+    server: '1.1.1.1',
     server_port: '53',
     path: '',
     interface: '',
@@ -644,7 +644,7 @@ export const DefaultFakeIPDnsRule = () => ({
       invert: true,
     },
     {
-      query_type: ['A', 'AAAA'],
+      query_type: ['A'],
     },
   ],
 })
@@ -758,7 +758,7 @@ export const DefaultDns = (): App.Dns => ({
     timeout: '3d',
   },
   final: DefaultDnsServersIds.RemoteDns,
-  strategy: Strategy.Default,
+  strategy: Strategy.IPv4Only,
 })
 
 export const DefaultMixin = (): App.Profile['mixin'] => {
