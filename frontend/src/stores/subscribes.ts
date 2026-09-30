@@ -279,7 +279,7 @@ export const useSubscribesStore = defineStore('subscribes', () => {
       requestTimeout: 15,
       header: {
         request: {
-          'User-Agent': 'clash.meta/mihomo',
+          'User-Agent': 'sing-box',
         },
         response: {},
       },

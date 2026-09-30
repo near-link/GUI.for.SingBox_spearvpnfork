@@ -77,7 +77,7 @@ export const useKernelApiStore = defineStore('kernelApi', () => {
     'allow-lan': false,
     mode: '',
     tun: {
-      enable: false,
+      enable: true,
       stack: '',
       device: '',
     },

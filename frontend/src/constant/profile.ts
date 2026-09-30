@@ -144,7 +144,7 @@ export const DefaultInbounds = (): App.Inbound[] => [
     id: DefaultInboundIds.Tun,
     type: Inbound.Tun,
     tag: 'tun-in',
-    enable: false,
+    enable: true,
     tun: DefaultInboundTun(),
   },
 ]
