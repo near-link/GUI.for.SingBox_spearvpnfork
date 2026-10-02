@@ -7,9 +7,9 @@ on:
   workflow_dispatch:
     inputs:
       tag_name:
-        description: 'Release Tag Name (e.g. v1.27.0-spear)'
+        description: 'Release Tag Name (e.g. v1.27.1-spear-r2)'
         required: false
-        default: 'v1.27.0-spear'
+        default: 'v1.27.1-spear-r2'
 
 permissions:
   contents: write
@@ -19,6 +19,20 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - name: Resolve app version
+        id: ver
+        shell: bash
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ] && [ -n "${{ github.event.inputs.tag_name }}" ]; then
+            echo "version=${{ github.event.inputs.tag_name }}" >> "$GITHUB_OUTPUT"
+          else
+            echo "version=${GITHUB_REF_NAME}" >> "$GITHUB_OUTPUT"
+          fi
+      - name: Inject app version into frontend
+        shell: bash
+        run: |
+          sed -i "s|^VITE_APP_VERSION.*|VITE_APP_VERSION = ${{ steps.ver.outputs.version }}|" frontend/.env
+          grep -q "VITE_APP_VERSION = ${{ steps.ver.outputs.version }}" frontend/.env
       - uses: pnpm/action-setup@v4
         with:
           version: latest
@@ -43,6 +57,20 @@ jobs:
       APP_NAME: GUI.for.SingBox
     steps:
       - uses: actions/checkout@v4
+      - name: Resolve app version
+        id: ver
+        shell: bash
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ] && [ -n "${{ github.event.inputs.tag_name }}" ]; then
+            echo "version=${{ github.event.inputs.tag_name }}" >> "$GITHUB_OUTPUT"
+          else
+            echo "version=${GITHUB_REF_NAME}" >> "$GITHUB_OUTPUT"
+          fi
+      - name: Inject app version into Go bridge
+        shell: bash
+        run: |
+          sed -i "s|AppVersion:   \"[^\"]*\"|AppVersion:   \"${{ steps.ver.outputs.version }}\"|" bridge/bridge.go
+          grep -q "AppVersion:   \"${{ steps.ver.outputs.version }}\"" bridge/bridge.go
       - uses: actions/setup-go@v5
         with:
           go-version-file: go.mod
